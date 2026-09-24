@@ -9,7 +9,7 @@
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <script>
     tailwind.config = {
@@ -18,47 +18,92 @@
         extend: {
           fontFamily: {
             sans: ['Space Grotesk', 'sans-serif'],
+            orbitron: ['Orbitron', 'sans-serif'],
           },
           colors: {
             darkBg: '#080d1a',
             cardBg: '#0e1628',
             accentCyan: '#38bdf8',
-            borderGlow: '#1e293b',
+            ironRed: '#991b1b',
+            ironGold: '#f59e0b',
+            ironBlue: '#00f0ff'
           }
         }
       }
     }
   </script>
   <style>
-    .photo-frame {
-      position: relative;
-    }
+    /* Photo Frame Base */
+    .photo-frame { position: relative; }
     .photo-frame::before {
-      content: '';
-      position: absolute;
-      top: -8px;
-      left: -8px;
-      width: 40px;
-      height: 40px;
-      border-top: 2px solid #38bdf8;
-      border-left: 2px solid #38bdf8;
+      content: ''; position: absolute; top: -8px; left: -8px; width: 40px; height: 40px;
+      border-top: 2px solid var(--accent-color, #38bdf8); border-left: 2px solid var(--accent-color, #38bdf8);
+      transition: all 0.5s ease;
     }
     .photo-frame::after {
-      content: '';
-      position: absolute;
-      bottom: -8px;
-      right: -8px;
-      width: 40px;
-      height: 40px;
-      border-bottom: 2px solid #38bdf8;
-      border-right: 2px solid #38bdf8;
+      content: ''; position: absolute; bottom: -8px; right: -8px; width: 40px; height: 40px;
+      border-bottom: 2px solid var(--accent-color, #38bdf8); border-right: 2px solid var(--accent-color, #38bdf8);
+      transition: all 0.5s ease;
     }
+
+    /* Arc Reactor Animation */
+    .arc-reactor {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 4px solid #00f0ff;
+      box-shadow: 0 0 30px #00f0ff, inset 0 0 30px #00f0ff;
+      animation: reactor-pulse 1.5s infinite alternate;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .arc-inner {
+      width: 60px; height: 60px; border-radius: 50%;
+      border: 2px dashed #f59e0b;
+      animation: spin 6s linear infinite;
+    }
+    @keyframes reactor-pulse {
+      from { box-shadow: 0 0 15px #00f0ff, inset 0 0 15px #00f0ff; }
+      to { box-shadow: 0 0 45px #00f0ff, inset 0 0 45px #00f0ff; }
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* HUD Grid Canvas Overlay for Iron Man Mode */
+    #ironCanvas {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none; z-index: 10; opacity: 0; transition: opacity 1s ease;
+    }
+    body.iron-man-mode #ironCanvas { opacity: 0.35; }
+
+    /* Theme Overrides for Iron Man Mode */
+    body.iron-man-mode {
+      background-color: #0d0202 !important;
+      color: #e2e8f0 !important;
+      --accent-color: #f59e0b;
+    }
+    body.iron-man-mode .text-accentCyan { color: #f59e0b !important; }
+    body.iron-man-mode .border-slate-800 { border-color: #450a0a !important; }
+    body.iron-man-mode .bg-cardBg\/50 { background-color: #1a0505 !important; }
   </style>
 </head>
-<body class="bg-darkBg text-slate-300 font-sans min-h-screen flex flex-col justify-between">
+<body class="bg-darkBg text-slate-300 font-sans min-h-screen flex flex-col justify-between transition-colors duration-700">
+
+  <!-- HUD Background Overlay Canvas -->
+  <canvas id="ironCanvas"></canvas>
+
+  <!-- Full-Screen Intro Overlay (Iron Man JARVIS Boot) -->
+  <div id="introOverlay" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-500">
+    <div class="arc-reactor mb-6">
+      <div class="arc-inner"></div>
+    </div>
+    <div class="font-orbitron text-xl text-ironBlue font-bold tracking-widest animate-pulse">
+      STARK INDUSTRIES HUD INITIALIZING...
+    </div>
+    <div id="hudText" class="font-mono text-xs text-amber-400 mt-2">WELCOME BACK, SIR.</div>
+    <button onclick="skipIntro()" class="absolute bottom-6 right-6 border border-amber-500/50 text-amber-400 text-xs px-3 py-1 font-mono hover:bg-amber-500/20">
+      Skip Intro • Esc
+    </button>
+  </div>
 
   <!-- Header / Navigation -->
-  <header class="max-w-6xl w-full mx-auto px-6 py-6 flex justify-between items-center">
+  <header class="max-w-6xl w-full mx-auto px-6 py-6 flex justify-between items-center relative z-20">
     <div class="border border-slate-700 px-3 py-1 rounded text-xs font-mono text-slate-400">
       MAG
     </div>
@@ -67,23 +112,26 @@
       <a href="https://github.com/SunnyKing342" target="_blank" class="hover:text-accentCyan transition">GITHUB</a>
       <a href="https://scholar.google.com/citations?user=Y_uqf0QAAAAJ&hl=en" target="_blank" class="hover:text-accentCyan transition">SCHOLAR</a>
       <a href="#" class="text-accentCyan underline underline-offset-4">RESUME &darr;</a>
-      <button id="themeToggle" class="border border-red-900 bg-red-950/40 text-red-400 text-xs px-3 py-1.5 rounded hover:bg-red-900/50 transition">
-        Itachi Mode
+      
+      <!-- Iron Man Mode Toggle Button -->
+      <button id="ironToggle" onclick="toggleIronManMode()" class="border border-amber-600 bg-amber-950/40 text-amber-400 font-orbitron text-xs px-3 py-1.5 rounded hover:bg-amber-900/60 transition flex items-center gap-2 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+        <i class="fas fa-shield-halved"></i> Iron Man Mode
       </button>
     </nav>
   </header>
 
   <!-- Hero Section -->
-  <main class="max-w-6xl w-full mx-auto px-6 py-8 flex-grow">
+  <main class="max-w-6xl w-full mx-auto px-6 py-8 flex-grow relative z-20">
     <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
       
       <!-- Profile Image Frame -->
       <div class="md:col-span-5 flex justify-center">
         <div class="photo-frame w-full max-w-sm">
           <img 
-            src="./profile.jpg"
+            src="./profile.jpg" 
             alt="Muhammad Arslan Ghaffar" 
             class="w-full h-[450px] object-cover object-top rounded shadow-2xl border border-slate-800 contrast-[1.05]"
+            style="image-rendering: -webkit-optimize-contrast;"
           />
         </div>
       </div>
@@ -155,9 +203,8 @@
       <!-- Dynamic Content Area -->
       <div class="p-6">
         
-        <!-- Publications Content (Populated from Google Scholar) -->
+        <!-- Publications Content -->
         <div id="content-publications" class="tab-content space-y-4">
-          
           <div class="border border-slate-800 p-4 rounded bg-slate-900/30">
             <div class="flex justify-between items-center">
               <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan px-2 py-0.5 rounded">2026</span>
@@ -197,7 +244,6 @@
             <p class="text-xs text-slate-400 mt-1"><strong>MA Ghaffar</strong>, Z Li, T Chen, SA Haider, M Pokharel, S Hanifi, N Subedi</p>
             <p class="text-xs text-slate-500 italic mt-0.5">7th International Conference on Transportation Information and Safety</p>
           </div>
-
         </div>
 
         <!-- Experience Content -->
@@ -232,12 +278,15 @@
     </section>
   </main>
 
-  <footer class="max-w-6xl w-full mx-auto px-6 py-6 text-center text-xs text-slate-600 border-t border-slate-800/40">
+  <footer class="max-w-6xl w-full mx-auto px-6 py-6 text-center text-xs text-slate-600 border-t border-slate-800/40 relative z-20">
     &copy; 2026 Muhammad Arslan Ghaffar. All rights reserved.
   </footer>
 
-  <!-- Tab Switching Script -->
+  <!-- Mode Control & Animation Scripts -->
   <script>
+    let ironModeActive = false;
+    let introTimer;
+
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => {
@@ -250,6 +299,104 @@
       activeBtn.classList.add('text-accentCyan', 'border-accentCyan', 'bg-slate-900/50');
       activeBtn.classList.remove('text-slate-400', 'border-transparent');
     }
+
+    function toggleIronManMode() {
+      if (!ironModeActive) {
+        // Show Full-Screen Intro
+        const intro = document.getElementById('introOverlay');
+        intro.classList.remove('hidden');
+        setTimeout(() => intro.classList.remove('opacity-0'), 10);
+        
+        // Play Intro Audio Effect
+        playPowerUpSound();
+
+        introTimer = setTimeout(() => {
+          skipIntro();
+        }, 3200);
+      } else {
+        // Turn Off Iron Man Mode
+        document.body.classList.remove('iron-man-mode');
+        document.getElementById('ironToggle').innerHTML = '<i class="fas fa-shield-halved"></i> Iron Man Mode';
+        ironModeActive = false;
+      }
+    }
+
+    function skipIntro() {
+      clearTimeout(introTimer);
+      const intro = document.getElementById('introOverlay');
+      intro.classList.add('opacity-0');
+      setTimeout(() => {
+        intro.classList.add('hidden');
+        document.body.classList.add('iron-man-mode');
+        document.getElementById('ironToggle').innerHTML = '<i class="fas fa-power-off"></i> Exit Iron Man';
+        ironModeActive = true;
+      }, 500);
+    }
+
+    // Web Audio API Synthesizer for Power-up sound (no external MP3 required)
+    function playPowerUpSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 1.2);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.2);
+      } catch(e) {}
+    }
+
+    // Canvas Background Animation (HUD Tech Particle Grid)
+    const canvas = document.getElementById('ironCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 40; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 1,
+        speedY: -Math.random() * 1.5 - 0.5,
+        alpha: Math.random()
+      });
+    }
+
+    function drawHUD() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (ironModeActive) {
+        ctx.fillStyle = '#f59e0b';
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.globalAlpha = p.alpha;
+          ctx.fill();
+          p.y += p.speedY;
+          if (p.y < 0) {
+            p.y = canvas.height;
+            p.x = Math.random() * canvas.width;
+          }
+        });
+      }
+      requestAnimationFrame(drawHUD);
+    }
+    drawHUD();
+
+    // Close intro on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') skipIntro();
+    });
   </script>
 </body>
 </html>
