@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Muhammad Arslan Ghaffar | AI & Intelligent Transportation Systems</title>
+  
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Fonts: Orbitron (Futuristic HUD) & Space Grotesk (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <script>
     tailwind.config = {
@@ -24,337 +29,564 @@
             darkBg: '#080d1a',
             cardBg: '#0e1628',
             accentCyan: '#38bdf8',
-            ironRed: '#991b1b',
+            ironRed: '#dc2626',
+            ironDarkRed: '#450a0a',
             ironGold: '#f59e0b',
-            ironBlue: '#00f0ff'
+            ironCyan: '#00f0ff',
+          },
+          animation: {
+            'float': 'float 5s ease-in-out infinite',
+            'pulse-glow': 'pulseGlow 2s infinite alternate',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-8px)' },
+            },
+            pulseGlow: {
+              '0%': { opacity: '0.4' },
+              '100%': { opacity: '0.9' },
+            }
           }
         }
       }
     }
   </script>
+
   <style>
-    /* Photo Frame Base */
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #080d1a; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+
+    /* Corner Bracket Styling for Photo Frame */
     .photo-frame { position: relative; }
     .photo-frame::before {
-      content: ''; position: absolute; top: -8px; left: -8px; width: 40px; height: 40px;
-      border-top: 2px solid var(--accent-color, #38bdf8); border-left: 2px solid var(--accent-color, #38bdf8);
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: -8px;
+      width: 36px;
+      height: 36px;
+      border-top: 3px solid var(--accent-theme, #38bdf8);
+      border-left: 3px solid var(--accent-theme, #38bdf8);
       transition: all 0.5s ease;
+      z-index: 10;
     }
     .photo-frame::after {
-      content: ''; position: absolute; bottom: -8px; right: -8px; width: 40px; height: 40px;
-      border-bottom: 2px solid var(--accent-color, #38bdf8); border-right: 2px solid var(--accent-color, #38bdf8);
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      right: -8px;
+      width: 36px;
+      height: 36px;
+      border-bottom: 3px solid var(--accent-theme, #38bdf8);
+      border-right: 3px solid var(--accent-theme, #38bdf8);
       transition: all 0.5s ease;
+      z-index: 10;
     }
 
-    /* Arc Reactor Animation */
+    /* Arc Reactor Glowing Intro Animation */
     .arc-reactor {
-      width: 120px; height: 120px; border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
       border: 4px solid #00f0ff;
-      box-shadow: 0 0 30px #00f0ff, inset 0 0 30px #00f0ff;
-      animation: reactor-pulse 1.5s infinite alternate;
-      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 35px #00f0ff, inset 0 0 35px #00f0ff;
+      animation: reactor-glow 1.5s infinite alternate;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .arc-inner {
-      width: 60px; height: 60px; border-radius: 50%;
-      border: 2px dashed #f59e0b;
-      animation: spin 6s linear infinite;
+    .arc-inner-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px dashed #f59e0b;
+      animation: spin-clockwise 8s linear infinite;
     }
-    @keyframes reactor-pulse {
-      from { box-shadow: 0 0 15px #00f0ff, inset 0 0 15px #00f0ff; }
-      to { box-shadow: 0 0 45px #00f0ff, inset 0 0 45px #00f0ff; }
+    .arc-core {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffffff 0%, #00f0ff 70%, transparent 100%);
+      box-shadow: 0 0 20px #ffffff, 0 0 40px #00f0ff;
     }
-    @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    /* HUD Grid Canvas Overlay for Iron Man Mode */
-    #ironCanvas {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      pointer-events: none; z-index: 10; opacity: 0; transition: opacity 1s ease;
+    @keyframes reactor-glow {
+      from { box-shadow: 0 0 20px #00f0ff, inset 0 0 20px #00f0ff; transform: scale(0.98); }
+      to { box-shadow: 0 0 50px #00f0ff, inset 0 0 40px #00f0ff; transform: scale(1.03); }
     }
-    body.iron-man-mode #ironCanvas { opacity: 0.35; }
+    @keyframes spin-clockwise { 100% { transform: rotate(360deg); } }
 
-    /* Theme Overrides for Iron Man Mode */
+    /* HUD Background Canvas Overlay */
+    #jarvisCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    body.iron-man-mode #jarvisCanvas {
+      opacity: 0.65;
+    }
+
+    /* CSS Variable Fallbacks */
+    body {
+      --accent-theme: #38bdf8;
+    }
+    
+    /* Iron Man Theme Overrides */
     body.iron-man-mode {
-      background-color: #0d0202 !important;
-      color: #e2e8f0 !important;
-      --accent-color: #f59e0b;
+      --accent-theme: #f59e0b;
+      background-color: #0b0202 !important;
     }
-    body.iron-man-mode .text-accentCyan { color: #f59e0b !important; }
-    body.iron-man-mode .border-slate-800 { border-color: #450a0a !important; }
-    body.iron-man-mode .bg-cardBg\/50 { background-color: #1a0505 !important; }
+    body.iron-man-mode .theme-text-accent { color: #f59e0b !important; }
+    body.iron-man-mode .theme-border-accent { border-color: #f59e0b !important; }
+    body.iron-man-mode .theme-bg-accent { background-color: #f59e0b !important; }
+    body.iron-man-mode .theme-card { background-color: rgba(26, 5, 5, 0.85) !important; border-color: #7f1d1d !important; }
+    body.iron-man-mode .theme-glow { box-shadow: 0 0 25px rgba(245, 158, 11, 0.2) !important; }
+
+    /* Scanline Screen Overlay */
+    .scanline-overlay {
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0),
+        rgba(255,255,255,0) 50%,
+        rgba(0, 0, 0, 0.25) 50%,
+        rgba(0, 0, 0, 0.25)
+      );
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
+    /* Iron Man Realistic Figure Drop Shadow */
+    .iron-man-figure-img {
+      filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.6)) drop-shadow(0 0 45px rgba(220, 38, 38, 0.4));
+    }
   </style>
 </head>
-<body class="bg-darkBg text-slate-300 font-sans min-h-screen flex flex-col justify-between transition-colors duration-700">
 
-  <!-- HUD Background Overlay Canvas -->
-  <canvas id="ironCanvas"></canvas>
+<body class="bg-darkBg text-slate-300 font-sans min-h-screen flex flex-col justify-between relative overflow-x-hidden transition-colors duration-700">
 
-  <!-- Full-Screen Intro Overlay (Iron Man JARVIS Boot) -->
-  <div id="introOverlay" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-500">
-    <div class="arc-reactor mb-6">
-      <div class="arc-inner"></div>
+  <!-- HUD Canvas Particle/Grid Layer -->
+  <canvas id="jarvisCanvas"></canvas>
+
+  <!-- Scanline Overlay -->
+  <div id="scanline" class="fixed inset-0 scanline-overlay z-10 pointer-events-none opacity-0 transition-opacity duration-700"></div>
+
+  <!-- J.A.R.V.I.S. Fullscreen Boot Intro Overlay -->
+  <div id="jarvisIntro" class="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center hidden opacity-0 transition-opacity duration-500 font-orbitron">
+    <div class="arc-reactor mb-8">
+      <div class="arc-inner-ring flex items-center justify-center">
+        <div class="arc-core"></div>
+      </div>
     </div>
-    <div class="font-orbitron text-xl text-ironBlue font-bold tracking-widest animate-pulse">
+    
+    <div class="text-xl sm:text-3xl text-cyan-400 font-bold tracking-widest text-center px-4 animate-pulse">
       STARK INDUSTRIES HUD INITIALIZING...
     </div>
-    <div id="hudText" class="font-mono text-xs text-amber-400 mt-2">WELCOME BACK, SIR.</div>
-    <button onclick="skipIntro()" class="absolute bottom-6 right-6 border border-amber-500/50 text-amber-400 text-xs px-3 py-1 font-mono hover:bg-amber-500/20">
-      Skip Intro • Esc
+    
+    <div class="mt-4 h-12 text-center">
+      <div id="hudTypeLog" class="text-xs sm:text-sm font-mono text-amber-400 tracking-wider"></div>
+    </div>
+
+    <button onclick="skipJarvisIntro()" class="mt-8 border border-amber-500/60 bg-amber-950/30 text-amber-400 text-xs px-4 py-2 rounded font-mono hover:bg-amber-500/20 transition flex items-center gap-2">
+      <i class="fas fa-forward"></i> SKIP INTRO • ESC
     </button>
   </div>
 
   <!-- Header / Navigation -->
   <header class="max-w-6xl w-full mx-auto px-6 py-6 flex justify-between items-center relative z-20">
-    <div class="border border-slate-700 px-3 py-1 rounded text-xs font-mono text-slate-400">
-      MAG
+    <div class="border border-slate-700 px-3 py-1 rounded text-xs font-mono text-slate-400 tracking-widest hover:border-accentCyan transition">
+      MAG // SIAT
     </div>
-    <nav class="flex items-center gap-6 text-sm">
+    
+    <nav class="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-medium">
       <a href="mailto:ghaffar@siat.ac.cn" class="hover:text-accentCyan transition">EMAIL</a>
       <a href="https://github.com/SunnyKing342" target="_blank" class="hover:text-accentCyan transition">GITHUB</a>
       <a href="https://scholar.google.com/citations?user=Y_uqf0QAAAAJ&hl=en" target="_blank" class="hover:text-accentCyan transition">SCHOLAR</a>
-      <a href="#" class="text-accentCyan underline underline-offset-4">RESUME &darr;</a>
+      <a href="mailto:ghaffar@siat.ac.cn" class="text-accentCyan underline underline-offset-4 hover:text-white transition">CONTACT &darr;</a>
       
       <!-- Iron Man Mode Toggle Button -->
-      <button id="ironToggle" onclick="toggleIronManMode()" class="border border-amber-600 bg-amber-950/40 text-amber-400 font-orbitron text-xs px-3 py-1.5 rounded hover:bg-amber-900/60 transition flex items-center gap-2 shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-        <i class="fas fa-shield-halved"></i> Iron Man Mode
+      <button id="ironToggleBtn" onclick="toggleIronManMode()" class="border border-amber-600/80 bg-amber-950/40 text-amber-400 font-orbitron text-xs px-3.5 py-2 rounded hover:bg-amber-900/60 transition flex items-center gap-2 shadow-[0_0_12px_rgba(245,158,11,0.2)]">
+        <i class="fas fa-shield-halved text-amber-400"></i>
+        <span id="toggleBtnText">Iron Man Mode</span>
       </button>
     </nav>
   </header>
 
-  <!-- Hero Section -->
-  <main class="max-w-6xl w-full mx-auto px-6 py-8 flex-grow relative z-20">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
+  <!-- Main Portfolio Section -->
+  <main class="max-w-6xl w-full mx-auto px-6 py-2 flex-grow relative z-20">
+
+    <!-- Realistic Standing Iron Man Armor Container (Visible ONLY in Iron Man Mode) -->
+    <div id="ironManAvatarContainer" class="w-full justify-center -mb-10 relative z-30 hidden">
+      <div class="relative">
+        <img 
+          src="https://pngimg.com/d/ironman_PNG15.png" 
+          alt="Iron Man Armor" 
+          onerror="this.onerror=null; this.src='https://images.replace.co/ironman.png';"
+          class="iron-man-figure-img w-48 h-64 sm:w-56 sm:h-72 object-contain animate-float pointer-events-none"
+        />
+      </div>
+    </div>
+
+    <!-- Hero Content Card -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center bg-cardBg/40 border border-slate-800/80 rounded-2xl p-6 sm:p-8 backdrop-blur-md theme-card theme-glow transition-all duration-500">
       
-      <!-- Profile Image Frame -->
+      <!-- Left Column: Framed Profile Image -->
       <div class="md:col-span-5 flex justify-center">
-        <div class="photo-frame w-full max-w-sm">
+        <div class="photo-frame w-full max-w-xs sm:max-w-sm">
           <img 
             src="./profile.jpg" 
             alt="Muhammad Arslan Ghaffar" 
-            class="w-full h-[450px] object-cover object-top rounded shadow-2xl border border-slate-800 contrast-[1.05]"
+            onerror="this.onerror=null; this.src='https://placehold.co/400x500/0e1628/38bdf8?text=Arslan+Ghaffar';"
+            class="w-full h-[380px] sm:h-[430px] object-cover object-top rounded-lg shadow-2xl border border-slate-800 contrast-[1.05]"
             style="image-rendering: -webkit-optimize-contrast;"
           />
         </div>
       </div>
 
-      <!-- Hero Bio & Details -->
+      <!-- Right Column: Personal Bio & Stats -->
       <div class="md:col-span-7 space-y-6">
-        <div class="flex items-center gap-2 text-accentCyan text-xs font-mono tracking-widest">
-          <span class="inline-block w-2 h-2 rounded-full bg-accentCyan animate-pulse"></span>
+        <div class="flex items-center gap-2 text-accentCyan theme-text-accent text-xs font-mono tracking-widest">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-accentCyan theme-bg-accent animate-pulse"></span>
           RESEARCHER • INTELLIGENT TRANSPORTATION & OBJECT DETECTION
         </div>
         
-        <h1 class="text-4xl md:text-6xl font-bold text-white tracking-tight leading-none">
-          Muhammad<br />
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-100 to-accentCyan">
-            Arslan Ghaffar
-          </span>
-        </h1>
+        <div>
+          <h1 class="text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
+            Muhammad<br />
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-100 via-sky-200 to-accentCyan theme-text-accent">
+              Arslan Ghaffar
+            </span>
+          </h1>
+        </div>
 
-        <p class="text-slate-400 text-sm leading-relaxed max-w-xl">
-          Researcher affiliated with <strong class="text-slate-200">Shenzhen Institutes of Advanced Technology, Chinese Academy of Sciences</strong>. My work focuses on Intelligent Transportation Systems, deep-learning based Object Detection, ADAS perception, and UAV routing optimization.
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+          Affiliated Researcher at <strong class="text-white">Shenzhen Institutes of Advanced Technology (SIAT), Chinese Academy of Sciences (CAS)</strong>. Specializing in computer vision algorithms, real-time object detection, ADAS perception systems, and integrated UAV routing optimization.
         </p>
 
-        <!-- Emails Section -->
-        <div class="text-xs font-mono space-y-1 text-slate-400">
-          <p><span class="text-slate-500">Primary:</span> <a href="mailto:ghaffar@siat.ac.cn" class="text-accentCyan hover:underline">ghaffar@siat.ac.cn</a></p>
-          <p><span class="text-slate-500">Secondary:</span> <a href="mailto:arslan.g9@chd.edu.cn" class="text-accentCyan hover:underline">arslan.g9@chd.edu.cn</a></p>
+        <!-- Emails -->
+        <div class="text-xs font-mono space-y-1 bg-slate-900/60 p-3.5 rounded-lg border border-slate-800/80 theme-card">
+          <p><span class="text-slate-500">Primary Email:</span> <a href="mailto:ghaffar@siat.ac.cn" class="text-accentCyan theme-text-accent hover:underline">ghaffar@siat.ac.cn</a></p>
+          <p><span class="text-slate-500">Secondary Email:</span> <a href="mailto:arslan.g9@chd.edu.cn" class="text-accentCyan theme-text-accent hover:underline">arslan.g9@chd.edu.cn</a></p>
         </div>
 
-        <!-- Stats Counter -->
-        <div class="grid grid-cols-3 gap-4 border-t border-b border-slate-800/80 py-4 max-w-lg">
+        <!-- Quick Stats Counters -->
+        <div class="grid grid-cols-3 gap-3 border-t border-b border-slate-800/80 py-4 theme-border-accent">
           <div>
-            <span class="block text-xl font-bold text-white">120+</span>
-            <span class="text-xs text-slate-500 uppercase tracking-wider">Citations</span>
+            <span class="block text-xl sm:text-2xl font-bold text-white font-orbitron">120+</span>
+            <span class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Citations</span>
           </div>
           <div>
-            <span class="block text-xl font-bold text-white">4+</span>
-            <span class="text-xs text-slate-500 uppercase tracking-wider">Publications</span>
+            <span class="block text-xl sm:text-2xl font-bold text-white font-orbitron">4+</span>
+            <span class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Publications</span>
           </div>
           <div>
-            <span class="block text-xl font-bold text-white">SIAT / CAS</span>
-            <span class="text-xs text-slate-500 uppercase tracking-wider">Affiliation</span>
+            <span class="block text-base sm:text-xl font-bold text-white font-orbitron">SIAT / CAS</span>
+            <span class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider">Affiliation</span>
           </div>
         </div>
 
-        <!-- Social Links -->
-        <div class="flex gap-3">
-          <a href="https://github.com/SunnyKing342" target="_blank" class="w-9 h-9 flex items-center justify-center bg-slate-900 border border-slate-800 rounded hover:border-accentCyan hover:text-accentCyan transition"><i class="fab fa-github"></i></a>
-          <a href="https://www.linkedin.com/in/muhammad-arslan-ghaffar-584194176/" target="_blank" class="w-9 h-9 flex items-center justify-center bg-slate-900 border border-slate-800 rounded hover:border-accentCyan hover:text-accentCyan transition"><i class="fab fa-linkedin-in"></i></a>
-          <a href="https://www.instagram.com/sunny_king342/" target="_blank" class="w-9 h-9 flex items-center justify-center bg-slate-900 border border-slate-800 rounded hover:border-accentCyan hover:text-accentCyan transition"><i class="fab fa-instagram"></i></a>
-          <a href="https://scholar.google.com/citations?user=Y_uqf0QAAAAJ&hl=en" target="_blank" class="w-9 h-9 flex items-center justify-center bg-slate-900 border border-slate-800 rounded hover:border-accentCyan hover:text-accentCyan transition"><i class="fas fa-graduation-cap"></i></a>
+        <!-- Social Media Buttons -->
+        <div class="flex flex-wrap gap-3 pt-1">
+          <a href="https://github.com/SunnyKing342" target="_blank" class="w-10 h-10 flex items-center justify-center bg-slate-900/80 border border-slate-800 rounded-lg hover:border-accentCyan hover:text-accentCyan theme-card transition">
+            <i class="fab fa-github text-base"></i>
+          </a>
+          <a href="https://www.linkedin.com/in/muhammad-arslan-ghaffar-584194176/" target="_blank" class="w-10 h-10 flex items-center justify-center bg-slate-900/80 border border-slate-800 rounded-lg hover:border-accentCyan hover:text-accentCyan theme-card transition">
+            <i class="fab fa-linkedin-in text-base"></i>
+          </a>
+          <a href="https://www.instagram.com/sunny_king342/" target="_blank" class="w-10 h-10 flex items-center justify-center bg-slate-900/80 border border-slate-800 rounded-lg hover:border-accentCyan hover:text-accentCyan theme-card transition">
+            <i class="fab fa-instagram text-base"></i>
+          </a>
+          <a href="https://scholar.google.com/citations?user=Y_uqf0QAAAAJ&hl=en" target="_blank" class="w-10 h-10 flex items-center justify-center bg-slate-900/80 border border-slate-800 rounded-lg hover:border-accentCyan hover:text-accentCyan theme-card transition">
+            <i class="fas fa-graduation-cap text-base"></i>
+          </a>
         </div>
+
       </div>
     </div>
 
     <!-- Interactive Navigation Tabs Section -->
-    <section class="mt-16 border border-slate-800 bg-cardBg/50 rounded-lg overflow-hidden">
-      <div class="px-6 py-3 border-b border-slate-800">
-        <span class="text-xs font-mono text-slate-500 uppercase">Select a Section</span>
+    <section class="mt-12 border border-slate-800/80 bg-cardBg/50 rounded-2xl overflow-hidden backdrop-blur-md theme-card transition-all duration-500">
+      <div class="px-6 py-3 border-b border-slate-800/80 flex justify-between items-center bg-slate-900/40">
+        <span class="text-xs font-mono text-slate-400 uppercase tracking-widest flex items-center gap-2">
+          <i class="fas fa-folder-open text-accentCyan theme-text-accent"></i> ACADEMIC PROFILE
+        </span>
+        <span class="text-[10px] font-mono text-slate-500">RESEARCH PORTFOLIO</span>
       </div>
 
-      <!-- Tab Buttons -->
-      <div class="flex overflow-x-auto border-b border-slate-800 text-xs font-mono">
-        <button onclick="switchTab('publications')" id="tab-publications" class="tab-btn px-6 py-3 border-b-2 border-accentCyan text-accentCyan bg-slate-900/50">PUBLICATIONS</button>
-        <button onclick="switchTab('experience')" id="tab-experience" class="tab-btn px-6 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200">EXPERIENCE</button>
-        <button onclick="switchTab('education')" id="tab-education" class="tab-btn px-6 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200">EDUCATION</button>
-        <button onclick="switchTab('skills')" id="tab-skills" class="tab-btn px-6 py-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200">RESEARCH INTERESTS</button>
+      <!-- Tab Buttons Grid -->
+      <div class="flex overflow-x-auto border-b border-slate-800/80 text-xs font-mono">
+        <button onclick="switchTab('publications')" id="tab-publications" class="tab-btn px-6 py-3.5 border-b-2 border-accentCyan text-accentCyan bg-slate-900/60 font-semibold transition whitespace-nowrap">
+          PUBLICATIONS
+        </button>
+        <button onclick="switchTab('experience')" id="tab-experience" class="tab-btn px-6 py-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition whitespace-nowrap">
+          EXPERIENCE
+        </button>
+        <button onclick="switchTab('education')" id="tab-education" class="tab-btn px-6 py-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition whitespace-nowrap">
+          EDUCATION
+        </button>
+        <button onclick="switchTab('skills')" id="tab-skills" class="tab-btn px-6 py-3.5 border-b-2 border-transparent text-slate-400 hover:text-slate-200 transition whitespace-nowrap">
+          RESEARCH INTERESTS
+        </button>
       </div>
 
-      <!-- Dynamic Content Area -->
-      <div class="p-6">
+      <!-- Tab Content Area -->
+      <div class="p-6 sm:p-8">
         
-        <!-- Publications Content -->
+        <!-- Publications Tab -->
         <div id="content-publications" class="tab-content space-y-4">
-          <div class="border border-slate-800 p-4 rounded bg-slate-900/30">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan px-2 py-0.5 rounded">2026</span>
-              <span class="text-xs font-mono text-slate-500">Citations: 3</span>
+          
+          <div class="border border-slate-800/80 p-5 rounded-xl bg-slate-900/40 hover:border-slate-700 transition theme-card">
+            <div class="flex justify-between items-start gap-4">
+              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan theme-text-accent px-2.5 py-1 rounded border border-accentCyan/20">2026</span>
+              <span class="text-xs font-mono text-slate-400"><i class="fas fa-quote-right mr-1"></i> Citations: 3</span>
             </div>
-            <h3 class="text-base font-bold text-white mt-2">YOLO-Night: Lighting the Path for Autonomous Vehicles with Robust Nighttime Perception</h3>
-            <p class="text-xs text-slate-400 mt-1">J Tian, <strong>MA Ghaffar</strong>, Z Li</p>
-            <p class="text-xs text-slate-500 italic mt-0.5">Sensors 26 (4), 1138</p>
+            <h3 class="text-base sm:text-lg font-bold text-white mt-2 leading-snug">
+              YOLO-Night: Lighting the Path for Autonomous Vehicles with Robust Nighttime Perception
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">J Tian, <strong>MA Ghaffar</strong>, Z Li</p>
+            <p class="text-xs text-slate-400 italic mt-1"><i class="fas fa-book-open mr-1"></i> Sensors 26 (4), 1138</p>
           </div>
 
-          <div class="border border-slate-800 p-4 rounded bg-slate-900/30">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan px-2 py-0.5 rounded">2024</span>
-              <span class="text-xs font-mono text-slate-500">Citations: 48</span>
+          <div class="border border-slate-800/80 p-5 rounded-xl bg-slate-900/40 hover:border-slate-700 transition theme-card">
+            <div class="flex justify-between items-start gap-4">
+              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan theme-text-accent px-2.5 py-1 rounded border border-accentCyan/20">2024</span>
+              <span class="text-xs font-mono text-slate-400"><i class="fas fa-quote-right mr-1"></i> Citations: 48</span>
             </div>
-            <h3 class="text-base font-bold text-white mt-2">Vehicle-UAV Integrated Routing Optimization Problem for Emergency Delivery of Medical Supplies</h3>
-            <p class="text-xs text-slate-400 mt-1"><strong>Muhammad Arslan Ghaffar</strong>, Lei Peng*, Muhammad Umer Aslam</p>
-            <p class="text-xs text-slate-500 italic mt-0.5">Electronics 13 (18)</p>
+            <h3 class="text-base sm:text-lg font-bold text-white mt-2 leading-snug">
+              Vehicle-UAV Integrated Routing Optimization Problem for Emergency Delivery of Medical Supplies
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1"><strong>Muhammad Arslan Ghaffar</strong>, Lei Peng*, Muhammad Umer Aslam</p>
+            <p class="text-xs text-slate-400 italic mt-1"><i class="fas fa-book-open mr-1"></i> Electronics 13 (18)</p>
           </div>
 
-          <div class="border border-slate-800 p-4 rounded bg-slate-900/30">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan px-2 py-0.5 rounded">2023</span>
-              <span class="text-xs font-mono text-slate-500">Citations: 57</span>
+          <div class="border border-slate-800/80 p-5 rounded-xl bg-slate-900/40 hover:border-slate-700 transition theme-card">
+            <div class="flex justify-between items-start gap-4">
+              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan theme-text-accent px-2.5 py-1 rounded border border-accentCyan/20">2023</span>
+              <span class="text-xs font-mono text-slate-400"><i class="fas fa-quote-right mr-1"></i> Citations: 57</span>
             </div>
-            <h3 class="text-base font-bold text-white mt-2">Electronics 12 (5), 1079</h3>
-            <p class="text-xs text-slate-400 mt-1"><strong>Muhammad Arslan Ghaffar</strong> et al.</p>
-            <p class="text-xs text-slate-500 italic mt-0.5">Electronics Journal</p>
+            <h3 class="text-base sm:text-lg font-bold text-white mt-2 leading-snug">
+              Deep Learning Perception Optimization in Intelligent Transportation
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1"><strong>Muhammad Arslan Ghaffar</strong> et al.</p>
+            <p class="text-xs text-slate-400 italic mt-1"><i class="fas fa-book-open mr-1"></i> Electronics 12 (5), 1079</p>
           </div>
 
-          <div class="border border-slate-800 p-4 rounded bg-slate-900/30">
-            <div class="flex justify-between items-center">
-              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan px-2 py-0.5 rounded">2023</span>
-              <span class="text-xs font-mono text-slate-500">Citations: 9</span>
+          <div class="border border-slate-800/80 p-5 rounded-xl bg-slate-900/40 hover:border-slate-700 transition theme-card">
+            <div class="flex justify-between items-start gap-4">
+              <span class="text-xs font-mono bg-accentCyan/10 text-accentCyan theme-text-accent px-2.5 py-1 rounded border border-accentCyan/20">2023</span>
+              <span class="text-xs font-mono text-slate-400"><i class="fas fa-quote-right mr-1"></i> Citations: 9</span>
             </div>
-            <h3 class="text-base font-bold text-white mt-2">A traffic sign recognition algorithm for ADAS based on CNN for complex scenarios</h3>
-            <p class="text-xs text-slate-400 mt-1"><strong>MA Ghaffar</strong>, Z Li, T Chen, SA Haider, M Pokharel, S Hanifi, N Subedi</p>
-            <p class="text-xs text-slate-500 italic mt-0.5">7th International Conference on Transportation Information and Safety</p>
+            <h3 class="text-base sm:text-lg font-bold text-white mt-2 leading-snug">
+              A traffic sign recognition algorithm for ADAS based on CNN for complex scenarios
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1"><strong>MA Ghaffar</strong>, Z Li, T Chen, SA Haider, M Pokharel, S Hanifi, N Subedi</p>
+            <p class="text-xs text-slate-400 italic mt-1"><i class="fas fa-globe mr-1"></i> 7th International Conference on Transportation Information and Safety (ICTIS)</p>
+          </div>
+
+        </div>
+
+        <!-- Experience Tab -->
+        <div id="content-experience" class="tab-content hidden space-y-6">
+          <div class="border-l-2 border-accentCyan theme-border-accent pl-5 py-1 space-y-2">
+            <span class="text-xs font-mono text-accentCyan theme-text-accent tracking-widest">RESEARCH AFFILIATION</span>
+            <h3 class="text-xl font-bold text-white">Shenzhen Institutes of Advanced Technology (SIAT)</h3>
+            <p class="text-sm text-slate-300">Chinese Academy of Sciences (CAS)</p>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mt-2">
+              Conducting research in object detection algorithms, ADAS computer vision perception, and emergency UAV drone delivery routing optimization.
+            </p>
           </div>
         </div>
 
-        <!-- Experience Content -->
-        <div id="content-experience" class="tab-content hidden space-y-4">
-          <div class="border-l-2 border-accentCyan pl-4 py-1">
-            <span class="text-xs font-mono text-accentCyan">RESEARCH AFFILIATION</span>
-            <h3 class="text-lg font-bold text-white">Shenzhen Institutes of Advanced Technology (SIAT)</h3>
-            <p class="text-xs text-slate-400">Chinese Academy of Sciences (CAS)</p>
-            <p class="text-sm text-slate-400 mt-2">Research focusing on object detection algorithms, autonomous driving systems, and emergency drone delivery optimization.</p>
+        <!-- Education Tab -->
+        <div id="content-education" class="tab-content hidden space-y-6">
+          <div class="border-l-2 border-slate-700 pl-5 py-1 space-y-2">
+            <span class="text-xs font-mono text-slate-400 tracking-widest">GRADUATE STUDIES</span>
+            <h3 class="text-xl font-bold text-white">Chang'an University (CHD)</h3>
+            <p class="text-sm text-slate-300">School of Information Engineering</p>
+            <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mt-2">
+              Focusing on Intelligent Transportation Systems, traffic sign recognition, and deep learning architectures.
+            </p>
           </div>
         </div>
 
-        <!-- Education Content -->
-        <div id="content-education" class="tab-content hidden space-y-4">
-          <div class="border-l-2 border-slate-700 pl-4 py-1">
-            <h3 class="text-lg font-bold text-white">Chang'an University (CHD)</h3>
-            <p class="text-xs text-slate-400">School of Information Engineering</p>
+        <!-- Research Interests Tab -->
+        <div id="content-skills" class="tab-content hidden">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-lg text-xs text-slate-200 flex items-center gap-2 theme-card">
+              <i class="fas fa-car text-accentCyan theme-text-accent"></i> Intelligent Transportation Systems
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-lg text-xs text-slate-200 flex items-center gap-2 theme-card">
+              <i class="fas fa-eye text-accentCyan theme-text-accent"></i> Object Detection (YOLO / CNNs)
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-lg text-xs text-slate-200 flex items-center gap-2 theme-card">
+              <i class="fas fa-shield-cat text-accentCyan theme-text-accent"></i> ADAS Perception Systems
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-lg text-xs text-slate-200 flex items-center gap-2 theme-card">
+              <i class="fas fa-drone text-accentCyan theme-text-accent"></i> UAV Integrated Routing
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-lg text-xs text-slate-200 flex items-center gap-2 theme-card">
+              <i class="fas fa-brain text-accentCyan theme-text-accent"></i> Deep Neural Networks
+            </div>
+            <div class="bg-slate-900/60 border border-slate-800 p-3.5 rounded-lg text-xs text-slate-200 flex items-center gap-2 theme-card">
+              <i class="fab fa-python text-accentCyan theme-text-accent"></i> Python / PyTorch / OpenCV
+            </div>
           </div>
-        </div>
-
-        <!-- Research Interests Content -->
-        <div id="content-skills" class="tab-content hidden flex flex-wrap gap-2">
-          <span class="bg-slate-900 border border-slate-800 px-3 py-1 rounded text-xs text-slate-300">Intelligent Transportation Systems</span>
-          <span class="bg-slate-900 border border-slate-800 px-3 py-1 rounded text-xs text-slate-300">Object Detection (YOLO)</span>
-          <span class="bg-slate-900 border border-slate-800 px-3 py-1 rounded text-xs text-slate-300">ADAS Perception</span>
-          <span class="bg-slate-900 border border-slate-800 px-3 py-1 rounded text-xs text-slate-300">UAV Routing Optimization</span>
-          <span class="bg-slate-900 border border-slate-800 px-3 py-1 rounded text-xs text-slate-300">Deep Learning (CNNs)</span>
-          <span class="bg-slate-900 border border-slate-800 px-3 py-1 rounded text-xs text-slate-300">Python / PyTorch</span>
         </div>
 
       </div>
     </section>
   </main>
 
-  <footer class="max-w-6xl w-full mx-auto px-6 py-6 text-center text-xs text-slate-600 border-t border-slate-800/40 relative z-20">
-    &copy; 2026 Muhammad Arslan Ghaffar. All rights reserved.
+  <!-- Footer -->
+  <footer class="max-w-6xl w-full mx-auto px-6 py-6 text-center text-xs text-slate-500 border-t border-slate-800/60 relative z-20 mt-12">
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
+      <p>&copy; 2026 Muhammad Arslan Ghaffar. All rights reserved.</p>
+      <p class="font-mono text-[10px] text-slate-600">SIAT / CAS & CHD</p>
+    </div>
   </footer>
 
-  <!-- Mode Control & Animation Scripts -->
   <script>
-    let ironModeActive = false;
-    let introTimer;
-
+    /* ==========================================================================
+       1. INTERACTIVE TAB SWITCHING SYSTEM
+       ========================================================================== */
     function switchTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => {
-        el.classList.remove('text-accentCyan', 'border-accentCyan', 'bg-slate-900/50');
+        el.classList.remove('text-accentCyan', 'border-accentCyan', 'bg-slate-900/60', 'font-semibold');
         el.classList.add('text-slate-400', 'border-transparent');
       });
 
-      document.getElementById('content-' + tabName).classList.remove('hidden');
+      const targetContent = document.getElementById('content-' + tabName);
+      if (targetContent) targetContent.classList.remove('hidden');
+
       const activeBtn = document.getElementById('tab-' + tabName);
-      activeBtn.classList.add('text-accentCyan', 'border-accentCyan', 'bg-slate-900/50');
-      activeBtn.classList.remove('text-slate-400', 'border-transparent');
-    }
-
-    function toggleIronManMode() {
-      if (!ironModeActive) {
-        // Show Full-Screen Intro
-        const intro = document.getElementById('introOverlay');
-        intro.classList.remove('hidden');
-        setTimeout(() => intro.classList.remove('opacity-0'), 10);
-        
-        // Play Intro Audio Effect
-        playPowerUpSound();
-
-        introTimer = setTimeout(() => {
-          skipIntro();
-        }, 3200);
-      } else {
-        // Turn Off Iron Man Mode
-        document.body.classList.remove('iron-man-mode');
-        document.getElementById('ironToggle').innerHTML = '<i class="fas fa-shield-halved"></i> Iron Man Mode';
-        ironModeActive = false;
+      if (activeBtn) {
+        activeBtn.classList.add('text-accentCyan', 'border-accentCyan', 'bg-slate-900/60', 'font-semibold');
+        activeBtn.classList.remove('text-slate-400', 'border-transparent');
       }
     }
 
-    function skipIntro() {
-      clearTimeout(introTimer);
-      const intro = document.getElementById('introOverlay');
+    /* ==========================================================================
+       2. AUDIO SYNTHESIS ENGINE (Web Audio API)
+       ========================================================================== */
+    function playUiSound(type) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+
+        if (type === 'boot') {
+          // Power-Up Pitch Ramp
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(120, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 1.2);
+          
+          gain.gain.setValueAtTime(0.1, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 1.2);
+        } else if (type === 'beep') {
+          // Soft HUD Beep
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1000, ctx.currentTime);
+          gain.gain.setValueAtTime(0.04, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.12);
+        }
+      } catch (e) {}
+    }
+
+    /* ==========================================================================
+       3. IRON MAN MODE TOGGLE LOGIC
+       ========================================================================== */
+    let isIronManMode = false;
+    let introTimeout;
+    const hudLogs = [
+      "SYSTEM CHECK: MARK LXXXV SUIT CONNECTED",
+      "STARK TACTICAL HUD ONLINE",
+      "BIOMETRIC SYNC COMPLETE"
+    ];
+
+    function toggleIronManMode() {
+      if (!isIronManMode) {
+        // Activate Fullscreen Boot Sequence
+        const intro = document.getElementById('jarvisIntro');
+        intro.classList.remove('hidden');
+        setTimeout(() => intro.classList.remove('opacity-0'), 20);
+
+        playUiSound('boot');
+        typeHudLogs(0);
+
+        introTimeout = setTimeout(() => {
+          skipJarvisIntro();
+        }, 3200);
+      } else {
+        // Deactivate Iron Man Mode (Return to Normal)
+        document.body.classList.remove('iron-man-mode');
+        document.getElementById('scanline').classList.add('opacity-0');
+        document.getElementById('ironManAvatarContainer').classList.add('hidden');
+        document.getElementById('ironManAvatarContainer').classList.remove('flex');
+        document.getElementById('toggleBtnText').innerText = "Iron Man Mode";
+        isIronManMode = false;
+      }
+    }
+
+    function typeHudLogs(index) {
+      if (index >= hudLogs.length) return;
+      const logEl = document.getElementById('hudTypeLog');
+      logEl.innerText = hudLogs[index];
+      playUiSound('beep');
+      setTimeout(() => typeHudLogs(index + 1), 900);
+    }
+
+    function skipJarvisIntro() {
+      clearTimeout(introTimeout);
+      const intro = document.getElementById('jarvisIntro');
       intro.classList.add('opacity-0');
+      
       setTimeout(() => {
         intro.classList.add('hidden');
         document.body.classList.add('iron-man-mode');
-        document.getElementById('ironToggle').innerHTML = '<i class="fas fa-power-off"></i> Exit Iron Man';
-        ironModeActive = true;
-      }, 500);
+        document.getElementById('scanline').classList.remove('opacity-0');
+        
+        // Display Realistic Iron Man Image Banner
+        const avatarContainer = document.getElementById('ironManAvatarContainer');
+        avatarContainer.classList.remove('hidden');
+        avatarContainer.classList.add('flex');
+        
+        document.getElementById('toggleBtnText').innerText = "Exit Iron Mode";
+        isIronManMode = true;
+      }, 400);
     }
 
-    // Web Audio API Synthesizer for Power-up sound (no external MP3 required)
-    function playPowerUpSound() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(100, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 1.2);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.2);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 1.2);
-      } catch(e) {}
-    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') skipJarvisIntro();
+    });
 
-    // Canvas Background Animation (HUD Tech Particle Grid)
-    const canvas = document.getElementById('ironCanvas');
+    /* ==========================================================================
+       4. 60FPS CANVAS HUD RENDERER (Circular Targets & Radar Particles)
+       ========================================================================== */
+    const canvas = document.getElementById('jarvisCanvas');
     const ctx = canvas.getContext('2d');
-    let particles = [];
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -363,40 +595,70 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    for (let i = 0; i < 40; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2 + 1,
-        speedY: -Math.random() * 1.5 - 0.5,
-        alpha: Math.random()
-      });
-    }
+    const particles = Array.from({ length: 40 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      radius: Math.random() * 2 + 0.8,
+      speedY: -Math.random() * 1.2 - 0.3,
+      alpha: Math.random() * 0.8 + 0.2
+    }));
 
-    function drawHUD() {
+    let rotationAngle = 0;
+
+    function renderJarvisHUD() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (ironModeActive) {
-        ctx.fillStyle = '#f59e0b';
+
+      if (isIronManMode) {
+        const colorPrimary = '#f59e0b';
+        const colorSecondary = '#00f0ff';
+
+        // 1. Target Reticle Header Effect
+        const cx = canvas.width / 2;
+        const cy = 130;
+
+        rotationAngle += 0.008;
+
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        ctx.beginPath();
+        ctx.arc(0, 0, 140, 0, Math.PI * 2);
+        ctx.strokeStyle = colorPrimary;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([8, 12]);
+        ctx.stroke();
+
+        ctx.rotate(rotationAngle);
+        ctx.beginPath();
+        ctx.arc(0, 0, 110, 0, Math.PI * 2);
+        ctx.strokeStyle = colorSecondary;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([20, 40]);
+        ctx.stroke();
+
+        ctx.restore();
+
+        // 2. Rising Energy Particles
+        ctx.fillStyle = colorPrimary;
         particles.forEach(p => {
           ctx.beginPath();
           ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
           ctx.globalAlpha = p.alpha;
           ctx.fill();
+
           p.y += p.speedY;
           if (p.y < 0) {
             p.y = canvas.height;
             p.x = Math.random() * canvas.width;
           }
         });
+        ctx.globalAlpha = 1.0;
       }
-      requestAnimationFrame(drawHUD);
-    }
-    drawHUD();
 
-    // Close intro on ESC key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') skipIntro();
-    });
+      requestAnimationFrame(renderJarvisHUD);
+    }
+
+    renderJarvisHUD();
   </script>
 </body>
 </html>
